@@ -44,10 +44,12 @@ dependencies:
   get: ^4.6.6
   #secret
   flutter_dotenv: ^5.2.1
+
   #Notification Services
   firebase_core: ^4.0.0
   firebase_messaging: ^16.0.0
   flutter_local_notifications: ^19.4.0
+
 
 
 dev_dependencies:
