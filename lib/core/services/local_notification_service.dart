@@ -33,4 +33,10 @@ class LocalNotificationService {
     description: 'Android push notification channel',
     importance: Importance.max,
   );
+
+  // Flag to track initialization status
+  bool _isFlutterLocalNotificaionInitialized = false;
+
+  // Counter for generating unique notification IDs
+  int _notificationIdCounter = 0;
 }
