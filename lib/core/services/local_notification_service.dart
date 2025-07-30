@@ -37,10 +37,10 @@ class LocalNotificationService {
   );
 
   // Flag to track initialization status
-  final bool _isFlutterLocalNotificationInitialized = false;
+  bool _isFlutterLocalNotificationInitialized = false;
 
   // Counter for generating unique notification IDs
-  final int _notificationIdCounter = 0;
+  int _notificationIdCounter = 0;
 
   /// Initializes the local notifications plugin for Android and iOS.
   Future<void> init () async {
@@ -69,5 +69,12 @@ class LocalNotificationService {
     );
 
     // Create Android notification channel
+    await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(_androidChannel);
+
+    // Mark initialization as complete
+    _isFlutterLocalNotificationInitialized = true;
   }
 }
