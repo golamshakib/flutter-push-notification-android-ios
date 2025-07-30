@@ -5,7 +5,8 @@ class LocalNotificationService {
   LocalNotificationService._internal();
 
   //Singleton instance
-  static final LocalNotificationService _instance = LocalNotificationService._internal();
+  static final LocalNotificationService _instance =
+      LocalNotificationService._internal();
 
   // Factory constructor to return the singleton instance
   factory LocalNotificationService.instance() => _instance;
@@ -14,12 +15,22 @@ class LocalNotificationService {
   late FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
   // Android-specific initialization settings using app launcher icons
-  final _androidInitializationSettings = const AndroidInitializationSettings('@mipmap/ic_launcher');
+  final _androidInitializationSettings = const AndroidInitializationSettings(
+    '@mipmap/ic_launcher',
+  );
 
   //iOS-specific initialization settings with Permission request
-  final _iosInitializationSettings = const DarwinInitializationSettings (
+  final _iosInitializationSettings = const DarwinInitializationSettings(
     requestAlertPermission: true,
     requestBadgePermission: true,
     requestSoundPermission: true,
+  );
+
+  // Android notification channel configuration
+  final _androidChannel = const AndroidNotificationChannel(
+    'channel_id',
+    'Channel name',
+    description: 'Android push notification channel',
+    importance: Importance.max,
   );
 }
