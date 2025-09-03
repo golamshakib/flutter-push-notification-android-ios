@@ -43,10 +43,9 @@ class LocalNotificationService {
   int _notificationIdCounter = 0;
 
   /// Initializes the local notifications plugin for Android and iOS.
-  Future<void> init () async {
-
+  Future<void> init() async {
     // Check if already initialized to prevent redundant setup
-    if(_isFlutterLocalNotificationInitialized){
+    if (_isFlutterLocalNotificationInitialized) {
       return;
     }
 
@@ -63,18 +62,52 @@ class LocalNotificationService {
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-      // Handle notification tap in foreground
+        // Handle notification tap in foreground
         log('Foreground notification has been tapped: ${response.payload}');
-      }
+      },
     );
 
     // Create Android notification channel
     await _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(_androidChannel);
 
     // Mark initialization as complete
     _isFlutterLocalNotificationInitialized = true;
+  }
+
+  /// Show a local notification with th given title, body, and payload
+  Future<void> showNotification(
+    String? title,
+    String? body,
+    String? payload,
+  ) async {
+    // Android-specific notification details
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      _androidChannel.id,
+      _androidChannel.name,
+      channelDescription: _androidChannel.description,
+      priority: Priority.high,
+    );
+
+    // iOS-specific notification details
+    DarwinNotificationDetails iosDetails = const DarwinNotificationDetails();
+
+    // Combine platform-specific details
+    final notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    // Display the notification
+    await _flutterLocalNotificationsPlugin.show(
+      _notificationIdCounter++,
+      title,
+      body,
+      notificationDetails,
+      payload: payload,
+    );
   }
 }
