@@ -71,6 +71,9 @@ class FirebaseMessagingService {
 
     // Log the user's permission decision
     print('User granted permission: ${result.authorizationStatus}');
+    if(result.authorizationStatus == AuthorizationStatus.denied) {
+      print('User denied notification permissions');
+    }
   }
 
   /// Handles messages received while the app is in the foreground
