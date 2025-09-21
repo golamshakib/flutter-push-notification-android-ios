@@ -1,4 +1,4 @@
-package com.notification.andorodios.notificationservice
+package com.notification.ash
 
 import io.flutter.embedding.android.FlutterActivity
 
