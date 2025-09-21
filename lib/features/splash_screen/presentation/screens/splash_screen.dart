@@ -74,7 +74,7 @@ class SplashScreen extends GetView<SplashController> {
             left: 0,
             right: 0,
             child: Center(
-              child: SpinKitCircle(
+              child: SpinKitSpinningLines(
                 size: 60,
                 color: AppColors.primaryBackground,
               ),
