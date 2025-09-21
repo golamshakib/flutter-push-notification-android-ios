@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:notification_services_android_ios/core/services/local_notification_service.dart';
 import 'package:notification_services_android_ios/firebase_options.dart';
 import 'app.dart';
-import 'core/services/Auth_service.dart';
 import 'core/services/firebase_messaging_services.dart';
 import 'core/utils/logging/loggerformain.dart';
 
@@ -28,7 +27,7 @@ void main() async {
     localNotificationService: localNotificationService,
   );
 
-  await AuthService.init();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
         (value) {
       Logger.init(kReleaseMode ? LogMode.live : LogMode.debug);
