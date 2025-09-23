@@ -239,6 +239,50 @@ await _flutterLocalNotificationsPlugin.show(
 ```
 ---
 
+### Setup for Native iOS main function
+
+Go to the AppDelegate.swift file from the code folder or from XCode. Then, need to import the flutter-local_notifications file and the flutter_local_notifications plugin.
+
+```dart
+import flutter_local_notifications
+```
+
+Plugin in the middle of the Bool block:
+
+```dart
+FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
+GeneratedPluginRegistrant.register(with: registry)
+}
+if #available(iOS 10.0, *) {
+ UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+}
+```
+
+Full code should look like this:
+
+```dart
+import Flutter
+import UIKit
+import flutter_local_notifications
+
+@main
+@objc class AppDelegate: FlutterAppDelegate {
+ override func application(
+   _ application: UIApplication,
+   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+ ) -> Bool {
+     FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
+     GeneratedPluginRegistrant.register(with: registry)
+     }
+      if #available(iOS 10.0, *) {
+        UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+      }
+   GeneratedPluginRegistrant.register(with: self)
+   return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+ }
+}
+```
+
 ### Firebase Messaging Service
 
 #### 1. Create the Service File (`firebase_messaging_service.dart`)
