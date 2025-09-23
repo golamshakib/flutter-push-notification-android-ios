@@ -293,23 +293,47 @@ Inside the `lib` folder, create a new folder named `services`. Under the `servic
 #### 2. Singleton Pattern Implementation
 ```dart
 class FirebaseMessagingService {
+
+  // Private constructor for singleton pattern
   FirebaseMessagingService._internal();
+
+  // Singleton instance
+
   static final FirebaseMessagingService _instance = FirebaseMessagingService._internal();
+
+  // Factory constructor to provide a singleton instance
   factory FirebaseMessagingService.instance() => _instance;
 }
 ```
 
-#### 3. Local Notification Service Integration
+#### 3. Local Notification Service Integration & Firebase Messaging Initialization and Setup
+
 ```dart
+// Reference to local notifications service for displaying notifications
 LocalNotificationService? _localNotificationService;
 
+/// Initialize Firebase Messaging and sets up all message Listeners
 Future<void> init({required LocalNotificationService localNotificationService}) async {
+
+   // Init local notifications service
   _localNotificationService = localNotificationService;
+
+  // Handle FCM Token
   _handlePushNotificationsToken();
+
+  // Request user permission for notifications
   _requestPermission();
+
+   // Register handler for background messages (app terminated)
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Listen for message when app is in foreground
   FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+
+   // Listen for notification taps when the app is in the background but not terminated
   FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
+
+  // Check for the initial message that opened the app from terminated state
   final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
   if (initialMessage != null) {
     _onMessageOpenedApp(initialMessage);
@@ -317,6 +341,73 @@ Future<void> init({required LocalNotificationService localNotificationService}) 
 }
 ```
 
+#### 4. Handling Push Notification Token
+
+```dart
+/// Retrieves and manages the FCM Token for Push Notification
+Future<void> _handlePushNotificationsToken() async {
+  // Get the FCM Token for the device
+  final token = await FirebaseMessaging.instance.getToken();
+  print('Push Notification Token: $token');
+
+// Listen for token refresh events
+  FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+    print('FCM Token refreshed: $fcmToken');
+    // TODO: optionally send token to your server for targeting this device
+  }).onError((error) {
+    // Handle errors during token refresh
+    print('Error refreshing FCM Token: $error');
+  });
+}
+```
+
+#### 5. Requesting Permission for Notifications
+
+```dart
+/// Request notification permission from the user
+Future<void> _requestPermission() async {
+  // Request permission for alerts, badges, and sounds
+  final result = await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true
+  );
+
+ // Log the user's permission decision
+  print('User granted permission: ${result.authorizationStatus}');
+  if(result.authorizationStatus == AuthorizationStatus.denied) {
+    print('User denied notification permissions');
+  }
+}
+```
+
+#### 6. Handling Foreground Messages, Notification Taps & Background Message Handler
+
+```dart
+// Handles messages received while the app is in the foreground
+void _onForegroundMessage(RemoteMessage message) {
+  print('Foreground message received: ${message.data.toString()}');
+  final notificationData = message.notification;
+  if (notificationData != null) {
+    // Display a local notification using the service
+    _localNotificationService?.showNotification(
+        notificationData.title, notificationData.body, message.data.toString());
+  }
+}
+
+/// Handles notification taps when app is opened from the background or terminated state
+void _onMessageOpenedApp(RemoteMessage message) {
+  print('Notification caused the app to open: ${message.data.toString()}');
+  // TODO: Add navigation or specific handling based on message data
+}
+
+/// Background message handler (must be top-level function or static)
+/// Handles messages when the app is fully terminated
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('Background message received: ${message.data.toString()}');
+}
+```
 ---
 
 ### Main Dart File Configuration
@@ -327,11 +418,15 @@ In your `main.dart` file, initialize both services:
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
+
+  /// Firebase Initialization
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  /// Initialize Local Notification Service
   final localNotificationService = LocalNotificationService.instance();
   await localNotificationService.init();
 
+  /// Initialize Firebase Messaging Service
   final firebaseMessagingService = FirebaseMessagingService.instance();
   await firebaseMessagingService.init(localNotificationService: localNotificationService);
 
