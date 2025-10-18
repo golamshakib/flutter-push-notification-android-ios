@@ -76,6 +76,49 @@ Firebase_android_api_key = "Your Firebase Android API Key Here"
 
 ---
 
+## Error Handling and Troubleshooting
+
+### Common Issues and Solutions for Firebase Push Notifications in Flutter
+
+When setting up push notifications with Firebase in Flutter, developers may encounter common issues related to configuration and setup. Below are a few troubleshooting tips:
+
+#### 1. API Key Configuration Issues
+
+- **Problem:** The Firebase API key may be incorrect or missing.
+- **Solution:** Double-check the API key in your `.env` file and ensure it's correctly referenced in `firebase_options.dart`:
+  
+  ```dart
+  apiKey: '${dotenv.env['Firebase_android_api_key']}',
+  ```
+  
+#### 2. Firebase CLI Setup Errors
+
+Problem: Errors during Firebase CLI setup.
+
+Solution: Ensure that you've activated the Firebase CLI correctly by running:
+
+```dart
+dart pub global activate flutterfire_cli
+```
+Then, use the following command to configure your app:
+
+```dart
+flutterfire configure
+```
+#### 3. Push Notification Delivery Issues on iOS and Android
+
+##### Problem: Push notifications are not delivered correctly on iOS or Android.
+
+##### Solution: Make sure you've configured the Firebase project for both platforms:
+
+- For Android, ensure the google-services.json file is placed correctly in the android/app folder.
+
+- For iOS, ensure the GoogleService-Info.plist file is included in your ios/Runner directory.
+
+Additionally, check the Firebase console for any error messages or notifications related to push delivery.
+
+---
+
 ## Apple Developer Account Setup for APNs
 
 ### 1. Create APNs Key
