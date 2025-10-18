@@ -90,6 +90,7 @@ When setting up push notifications with Firebase in Flutter, developers may enco
   ```dart
   apiKey: '${dotenv.env['Firebase_android_api_key']}',
   ```
+- You can also check the .env_example file in the root folder & firebase_options.dart file. In the lib folder, how do I use?
   
 #### 2. Firebase CLI Setup Errors
 
@@ -107,9 +108,9 @@ flutterfire configure
 ```
 #### 3. Push Notification Delivery Issues on iOS and Android
 
-##### Problem: Push notifications are not delivered correctly on iOS or Android.
+**Problem:** Push notifications are not delivered correctly on iOS or Android.
 
-##### Solution: Make sure you've configured the Firebase project for both platforms:
+**Solution:** Make sure you've configured the Firebase project for both platforms:
 
 - For Android, ensure the google-services.json file is placed correctly in the android/app folder.
 
