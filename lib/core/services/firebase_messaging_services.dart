@@ -48,7 +48,7 @@ class FirebaseMessagingService {
   Future<void> _handlePushNotificationsToken() async {
     // Get the FCM Token for the device
     final token = await FirebaseMessaging.instance.getToken();
-    print('Push Notification Token: $token');
+    print('FCM Token: $token');
 
     // Listen for token refresh events
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
